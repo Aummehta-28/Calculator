@@ -7,24 +7,26 @@ function todisplay(event) {
         let content = event.target.textContent;
 
         if (content === "AC") {
-            display.value = "";
+            display.textContent = "";
         }
         else if (content === "DEL") {
-            display.value = display.value.slice(0, display.value.length - 1)
+            display.textContent = display.textContent.slice(0, display.textContent.length - 1)
         }
 
         else if (content === "=") {
 
-            let error = isValid(display.value);
+            let error = isValid(display.textContent);
 
             if (error) {
-                display.value = error;
-
+                display.textContent = error;
                 return;
             }
 
+            let result = evaluate(display.textContent);
+            display.textContent = result;
+
         } else {
-            display.value += content;
+            display.textContent += content;
         }
     }
 
@@ -32,6 +34,81 @@ function todisplay(event) {
 }
 
 button.addEventListener("click", todisplay)
+
+function evaluate(expression) {
+    let num = [];
+    let operators = []
+    let currnum = ""
+    let i = 0;
+    while (i < expression.length) {
+        let char = expression[i];
+        currnum = "";
+        if (!isNaN(char) || char === ".") {
+            while (!isNaN(expression[i]) || expression[i] === ".") {
+                currnum += expression[i];
+                i++;
+            }
+            num.push(parseFloat(currnum));
+            continue;
+        }
+
+        if (char == "+" || char == "-" || char == "*" || char === "/") {
+            while (operators.length) {
+                let b = num.pop();
+                let a = num.pop();
+
+                let result;
+
+                let oper = operators.pop();
+                if (oper == "+") {
+                    result = a + b;
+                }
+                else if (oper == "*") {
+                    result = a * b;
+                }
+                else if (oper == "-") {
+                    result = a - b;
+                }
+                else if (oper == "/") {
+                    if (b == 0) {
+                        return "Cannot divide by 0"
+                    }
+                    result = a / b;
+                }
+                num.push(result);
+            }
+            operators.push(char);
+            i++;
+        }
+    }
+    while (operators.length) {
+        let b = num.pop();
+        let a = num.pop();
+
+        let result;
+
+        let oper = operators.pop();
+        if (oper == "+") {
+            result = a + b;
+        }
+        else if (oper == "*") {
+            result = a * b;
+        }
+        else if (oper == "-") {
+            result = a - b;
+        }
+        else if (oper == "/") {
+            if (b == 0) {
+                return "Cannot divide by 0"
+            }
+            result = a / b;
+        }
+        num.push(result);
+    }
+
+    return num.pop();
+
+}
 
 function isValid(expression) {
     if (/^[+*/%!]/.test(expression)) {
@@ -41,7 +118,7 @@ function isValid(expression) {
         return "Empty expression";
     }
 
-    if (/[+\-*/]$/.test(expression)) {
+    if (/[+\-*/.]$/.test(expression)) {
         return "Cannot end with operator";
     }
 
@@ -52,6 +129,9 @@ function isValid(expression) {
     if (/\d*\.\d*\./.test(expression)) {
         return "Multiple decimals in number";
     }
+
+
+
     let count = 0;
     for (let ch of expression) {
         if (ch == '(') {
