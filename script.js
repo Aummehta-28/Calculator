@@ -22,8 +22,8 @@ function todisplay(event) {
                 return;
             }
 
-            let result = evaluate(display.textContent);
-            display.textContent = result;
+            // let result = evaluate(display.textContent);
+            // display.textContent = result;
 
         } else {
             display.textContent += content;
@@ -35,80 +35,8 @@ function todisplay(event) {
 
 button.addEventListener("click", todisplay)
 
-function evaluate(expression) {
-    let num = [];
-    let operators = []
-    let currnum = ""
-    let i = 0;
-    while (i < expression.length) {
-        let char = expression[i];
-        currnum = "";
-        if (!isNaN(char) || char === ".") {
-            while (!isNaN(expression[i]) || expression[i] === ".") {
-                currnum += expression[i];
-                i++;
-            }
-            num.push(parseFloat(currnum));
-            continue;
-        }
-
-        if (char == "+" || char == "-" || char == "*" || char === "/") {
-            while (operators.length) {
-                let b = num.pop();
-                let a = num.pop();
-
-                let result;
-
-                let oper = operators.pop();
-                if (oper == "+") {
-                    result = a + b;
-                }
-                else if (oper == "*") {
-                    result = a * b;
-                }
-                else if (oper == "-") {
-                    result = a - b;
-                }
-                else if (oper == "/") {
-                    if (b == 0) {
-                        return "Cannot divide by 0"
-                    }
-                    result = a / b;
-                }
-                num.push(result);
-            }
-            operators.push(char);
-            i++;
-        }
-    }
-    while (operators.length) {
-        let b = num.pop();
-        let a = num.pop();
-
-        let result;
-
-        let oper = operators.pop();
-        if (oper == "+") {
-            result = a + b;
-        }
-        else if (oper == "*") {
-            result = a * b;
-        }
-        else if (oper == "-") {
-            result = a - b;
-        }
-        else if (oper == "/") {
-            if (b == 0) {
-                return "Cannot divide by 0"
-            }
-            result = a / b;
-        }
-        num.push(result);
-    }
-
-    return num.pop();
-
-}
+// function evaluate(expression) {
+// }
 
 function isValid(expression) {
     if (/^[+*/%!]/.test(expression)) {
